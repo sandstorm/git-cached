@@ -39,14 +39,14 @@ function __gitc_initialize() {
 
   set - $args
 
-  #                                      1 addr - full address
-  #                                      | 2 prot - protocol, e.g. http://, git://, etc...
-  #                                      | |                3 user - the user in user@git.drupal.org[...]
-  #                                      | |                |            4 doma - domain, e.g. git.drupal.org
-  #                                      | |                |            |              5 port - port number
-  #                                      | |                |            |              |              6 path - path after domain
-  #                                      | |                |            |              |              |              7 proj - project name
-  #                                      | |                |            |              |              |              |
+  # 1 addr - full address
+  # | 2 prot - protocol, e.g. http://, git://, etc...
+  # | | 3 user - the user in user@git.drupal.org[...]
+  # | | | 4 doma - domain, e.g. git.drupal.org
+  # | | | | 5 port - port number
+  # | | | | | 6 path - path after domain
+  # | | | | | | 7 proj - project name
+  # | | | | | | |
   local s=$(echo "~ $*"| sed -n 's|.*[ ]\(\([a-zA-Z]*://\)*\([^ ]*[@]\)*\([^ /:]*\)[:]*\([0-9]*\)*[/]*\([^ :]*[^ /]*/\([^ /]*\)\.git\)\).*|\1,\2,\3,\4,\5,\6,\7|p')
   local addr=$(echo $s | sed -n 's|\([^,]*\),.*|\1|p')
   local prot=$(echo $s | sed -n 's|\([^,]*,\)\{1\}\([^,]*\),.*|\2|p')
@@ -69,7 +69,7 @@ function __gitc_initialize() {
   fi
 
   # Create cache directory for the domain and initialize if it doesn't exist.
-  if [[ ! -d  $cdir ]]; then
+  if [[ ! -d $cdir ]]; then
     mkdir $cdir && cd $cdir
     git init --bare
     # Object store should never be pruned.
