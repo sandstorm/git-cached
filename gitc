@@ -158,7 +158,7 @@ function _gitc_pull() {
   _gitc_fetch "$@"
 }
 
-function _gitc_cclone() {
+function _gitc_clone() {
   set - `__gitc_filter_args "$@"`
   __gitc_initialize "$@"
 

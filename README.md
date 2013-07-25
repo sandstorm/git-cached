@@ -15,10 +15,10 @@ Usage
 
 `gitc` accepts all `git` commands. For the ones it does not know of, it will simply pass-through to git.
 
-When cloning, use the `cclone` (two c's as in cached clone).
+When cloning with `gitc`, it will transparently use the cache.
 
 ```bash
-gitc cclone --branch 8.x git://git.drupal.org/project/drupal.git
+gitc clone --branch 8.x git://git.drupal.org/project/drupal.git
 ```
 
 If at anytime you need to remove all reference to the cache (runs `git repack -a -d -l` and removes pointer in the alternates file.:
@@ -45,10 +45,10 @@ If you need to run git commands on the cache store itself, use the `cache` sub-c
 gitc cache remote
 ```
 
-When cloning, attaching or repairing, you can pass in a `--store-group` option to tell it to use a separate object store. It defautls to `default`.
+When cloning, attaching or repairing, you can pass in a `--store-group` option to tell it to use a separate object store. It defaults to `default`.
 
 ```bash
-gitc cclone --store-group foobar --branch 8.x git://git.drupal.org/project/drupal.git
+gitc clone --store-group foobar --branch 8.x git://git.drupal.org/project/drupal.git
 ```
 
 The above command will point the object store to `$HOME/.gitobjectstore/foobar`. (defaults to `$HOME/.gitobjectstore/default`)
