@@ -3,6 +3,7 @@ set -e
 
 if [[ ! $GIT_CACHE_DIR ]]; then
   GIT_CACHE_DIR=$HOME/.gitobjectstore
+  mkdir -p $GIT_CACHE_DIR
 fi
 
 
