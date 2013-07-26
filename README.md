@@ -10,6 +10,33 @@ export PATH=$HOME/bin:$PATH
 export GIT_CACHED_DIR=$HOME/.gitobjectstore
 ```
 
+Alternative installation: Replacing "git" altogether
+----------------------------------------------------
+
+You can also replace the `git` command globally, which is very helpful f.e. when working with (legacy) tools
+and scripts which are hard-coded to use the `git` binary. This f.e. applies to [composer](http://getcomposer.org/) (which is a PHP package management solution).
+
+You need to rename `gitc` to `git` and place it on your `$PATH` such that it is loaded *first*, i.e. before
+the normal git (f.e. in `~/bin`). Furthermore, you need to set the environment variable `PATH_TO_GITC` such
+that it points to the original `git` command.
+
+So, in a nutshell:
+```bash
+mkdir -p ~/bin/
+
+cp /path/to/gitc ~/bin/git
+```
+
+Afterwards, add the following to your `~/.profile` or `~/.zshrc` or `~/.bashrc` (depending on what you use):
+
+```bash
+##### GITC Git Cache #####
+export PATH=~/bin:$PATH
+export GITC_ORIGINAL_GIT=/path/to/original/git
+alias git-uncached=$GITC_ORIGINAL_GIT
+```
+
+
 Usage
 ------
 
