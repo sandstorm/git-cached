@@ -88,3 +88,81 @@ Notes
   - This is the first bash script I’ve created. Consider this a fair warning. Tested on Mac OSX Lion.
   - I personally don't use this for critical work. I'm using this to reduce the bandwidth and disk space on multiple versions of checked out repos that are mostly read only. It does work fine from what I've tested.
   - This new development version is incompatible with the master branch.
+
+
+Internals
+---------
+
+(reverse engineered)
+
+*clone*
+
+- split apart
+- # 1 addr - full address
+  # | 2 prot - protocol, e.g. http://, git://, etc...
+  # | | 3 user - the user in user@git.drupal.org[...]
+  # | | | 4 doma - domain, e.g. git.drupal.org
+  # | | | | 5 port - port number
+  # | | | | | 6 path - path after domain
+  # | | | | | | 7 proj - project name
+- only do it if DOMAIN is set (becuase then it's not local)
+- initialize SHARED cache directory if it does not exist
+	- cd ~/.gtiobjects/default
+	- git init --bare
+	- git config --add gc.pruneexpire never
+	- (+ error handling; on failures remove it again)
+- go INTO cache directory
+- initialize clone if it does not exist (this is determined by checking the output of "git remote" and comparing it with the PROJECT)
+	- git remote (lists something like)
+		BuildEssentials
+		Frontend
+		PlusPunktHosting
+		ProductManagement
+		TYPO3.Aloha
+		TYPO3.Eel
+		TYPO3.Expose
+		TYPO3.ExtJS
+		TYPO3.Flow
+		TYPO3.Fluid
+		TYPO3.Form
+		TYPO3.Imagine
+		TYPO3.Kickstart
+		TYPO3.Media
+		TYPO3.Neos
+		TYPO3.Neos.NodeTypes
+		TYPO3.Party
+		TYPO3.Setup
+		TYPO3.TYPO3CR
+		TYPO3.Twitter.Bootstrap
+		TYPO3.TypoScript
+		migrations
+	- TODO error: if two different PROJECTS are named BuildEssentials but are not the same --> error!!!!
+	- (create temporary directory, and clone using git clone --bare (adress) (tempdir))
+	- inside git cache: add remote "PROJECTNAME" (tempdir of above)
+
+	- git config --add remote.[PROJECTNAME].tagopt --no-tags
+	  # Add default configuration for the project.
+      # Do not download tags due to the overlaps across projects.
+
+	- # Update with temporary clone then point remote URL externally; and fetch again
+      echo "Creating cache: $doma >> $proj..."
+      git remote update [PROJECTNAME] # (fetches)
+      $GITC_ORIGINAL_GIT remote set-url $proj $addr
+      $GITC_ORIGINAL_GIT fetch $proj
+    - (TEMP DIR NOT NEEDED ANYMORE)
+    - ---------------------------------------- INITIALIZE FINISHED
+    -  git clone (original URL) --reference (GIT CACHE DIR) --config git-cached.project=PROJECT --config git-cached.domain=DOMAIN --config git-cached.cache-dir=CACHE_DIR
+    -  !!!! MAGIC SAUCE: "REFERENCE" parameter (see git help); allows to re-use existing OBJECTS
+    - --> only an OBJECT store, that's why we do not need any tags while initializing this repository.
+
+
+ *git fetch / git pull*
+- go to cache directory (which we must know from local git config)
+- (in cache directory) git fetch [PROJECTNAME] -- updates the cache.
+- -> then, run GIT AS USUAL!
+
+
+
+*Helpers: not needed for us*
+
+
